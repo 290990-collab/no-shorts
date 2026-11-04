@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "No Shorts",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Removes YouTube Shorts everywhere: menu, shelves, search, channel tabs and the /shorts URL itself.",
   "permissions": ["declarativeNetRequest"],
   "host_permissions": ["*://*.youtube.com/*"],

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         No Shorts
 // @namespace    https://github.com/290990-collab/no-shorts
-// @version      1.0.0
+// @version      1.0.1
 // @description  Removes YouTube Shorts everywhere: menu, shelves, search, channel tabs and the /shorts URL itself.
 // @homepageURL  https://github.com/290990-collab/no-shorts
 // @downloadURL  https://raw.githubusercontent.com/290990-collab/no-shorts/main/no-shorts.user.js
@@ -33,7 +33,9 @@ ytd-rich-section-renderer:has(ytd-rich-shelf-renderer[is-shorts]),
 ytd-rich-section-renderer:has(a[href^="/shorts/"]),
 ytd-reel-shelf-renderer,
 grid-shelf-view-model:has(a[href^="/shorts/"]),
-ytd-item-section-renderer:has(> #contents > ytd-reel-shelf-renderer),
+/* Only when the section holds nothing but Shorts shelves: on the watch page the whole
+   related-videos column is one item section, and a Shorts shelf can appear inside it */
+ytd-item-section-renderer:has(> #contents > ytd-reel-shelf-renderer):not(:has(> #contents > :not(ytd-reel-shelf-renderer))),
 
 /* Single Shorts in grids and lists */
 ytd-rich-item-renderer:has(a[href^="/shorts/"]),
