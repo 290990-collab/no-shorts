@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "No Shorts",
+  "version": "1.0.0",
+  "description": "Removes YouTube Shorts everywhere: menu, shelves, search, channel tabs and the /shorts URL itself.",
+  "permissions": ["declarativeNetRequest"],
+  "host_permissions": ["*://*.youtube.com/*"],
+  "declarative_net_request": {
+    "rule_resources": [
+      { "id": "block_shorts", "enabled": true, "path": "rules.json" }
+    ]
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.youtube.com/*"],
+      "css": ["content.css"],
+      "js": ["content.js"],
+      "run_at": "document_start",
+      "all_frames": true
+    }
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "no-shorts@local",
+      "strict_min_version": "128.0"
+    }
+  }
+}

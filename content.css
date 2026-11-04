@@ -1,0 +1,51 @@
+/* ===== Desktop (www.youtube.com) ===== */
+
+/* "Shorts" entry in the sidebar and mini sidebar */
+ytd-guide-entry-renderer:has(a[title="Shorts"]),
+ytd-guide-entry-renderer:has(a[href^="/shorts"]),
+ytd-mini-guide-entry-renderer[aria-label="Shorts"],
+ytd-mini-guide-entry-renderer:has(a[title="Shorts"]),
+ytd-mini-guide-entry-renderer:has(a[href^="/shorts"]),
+
+/* Shorts shelves (home, search, subscriptions, related videos) */
+ytd-rich-shelf-renderer[is-shorts],
+ytd-rich-section-renderer:has(ytd-rich-shelf-renderer[is-shorts]),
+ytd-rich-section-renderer:has(a[href^="/shorts/"]),
+ytd-reel-shelf-renderer,
+grid-shelf-view-model:has(a[href^="/shorts/"]),
+ytd-item-section-renderer:has(> #contents > ytd-reel-shelf-renderer),
+
+/* Single Shorts in grids and lists */
+ytd-rich-item-renderer:has(a[href^="/shorts/"]),
+ytd-video-renderer:has(a[href^="/shorts/"]),
+ytd-grid-video-renderer:has(a[href^="/shorts/"]),
+ytd-compact-video-renderer:has(a[href^="/shorts/"]),
+ytd-playlist-video-renderer:has(a[href^="/shorts/"]),
+yt-lockup-view-model:has(a[href^="/shorts/"]),
+ytd-notification-renderer:has(a[href^="/shorts/"]),
+ytd-reel-item-renderer,
+ytm-shorts-lockup-view-model,
+ytm-shorts-lockup-view-model-v2,
+
+/* "Shorts" tab on channel pages */
+yt-tab-shape[tab-title="Shorts"],
+tp-yt-paper-tab:has(> .tab-content[title="Shorts"]),
+
+/* The Shorts player itself, just in case */
+ytd-shorts,
+ytd-reel-video-renderer,
+
+/* ===== Mobile (m.youtube.com) ===== */
+ytm-pivot-bar-item-renderer:has(.pivot-shorts),
+ytm-reel-shelf-renderer,
+ytm-rich-section-renderer:has(ytm-reel-shelf-renderer),
+ytm-rich-section-renderer:has(a[href^="/shorts/"]),
+ytm-video-with-context-renderer:has(a[href^="/shorts/"]),
+ytm-rich-item-renderer:has(a[href^="/shorts/"]),
+ytm-compact-video-renderer:has(a[href^="/shorts/"]),
+ytm-shorts-lockup-view-model,
+
+/* Marked by content.js */
+[data-no-shorts] {
+  display: none !important;
+}
