@@ -29,7 +29,7 @@ It covers `www.youtube.com` and `m.youtube.com`.
 
 ### Chrome, Edge, Brave, Opera
 
-1. Download `no-shorts-1.0.0.zip` from the [latest release](https://github.com/290990-collab/no-shorts/releases/latest) and unzip it somewhere permanent. The browser loads the extension from that folder, so don't delete it later.
+1. Download `no-shorts-1.0.1.zip` from the [latest release](https://github.com/290990-collab/no-shorts/releases/latest) and unzip it somewhere permanent. The browser loads the extension from that folder, so don't delete it later.
 2. Open `chrome://extensions` (Edge: `edge://extensions`, Brave: `brave://extensions`, Opera: `opera://extensions`).
 3. Turn on **Developer mode** (top right).
 4. Click **Load unpacked** and select the unzipped folder.
