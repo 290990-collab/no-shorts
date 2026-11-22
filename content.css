@@ -51,3 +51,41 @@ ytm-shorts-lockup-view-model,
 [data-no-shorts] {
   display: none !important;
 }
+
+/* ===== Optional extras, switched on from the popup ===== */
+/* content.js puts data-ns-<option> on <html> for each enabled option */
+
+/* Comments */
+html[data-ns-comments] ytd-comments#comments,
+html[data-ns-comments] ytd-item-section-renderer[section-identifier="comment-item-section"],
+html[data-ns-comments] ytd-engagement-panel-section-list-renderer[target-id="engagement-panel-comments-section"],
+html[data-ns-comments] ytd-comments-entry-point-header-renderer,
+html[data-ns-comments] ytm-comments-entry-point-header-renderer,
+html[data-ns-comments] ytm-comment-section-renderer,
+html[data-ns-comments] ytm-item-section-renderer[section-identifier="comments-entry-point"],
+html[data-ns-comments] ytm-engagement-panel-section-list-renderer[panel-target-id="engagement-panel-comments-section"],
+
+/* Live chat */
+html[data-ns-chat] ytd-live-chat-frame,
+html[data-ns-chat] #chat-container,
+html[data-ns-chat] ytm-live-chat-renderer,
+
+/* Related videos next to (or under) the player */
+html[data-ns-related] ytd-watch-flexy #related,
+html[data-ns-related] ytd-watch-next-secondary-results-renderer,
+html[data-ns-related] ytm-item-section-renderer[section-identifier="related-items"],
+html[data-ns-related] ytm-single-column-watch-next-results-renderer ytm-item-section-renderer:has(ytm-video-with-context-renderer),
+
+/* Suggestions on top of the video when it ends */
+html[data-ns-endscreen] .ytp-endscreen-content,
+html[data-ns-endscreen] .ytp-ce-element,
+html[data-ns-endscreen] .ytp-fullscreen-grid,
+html[data-ns-endscreen] .ytp-autonav-endscreen-upnext-container,
+
+/* Home page feed */
+html[data-ns-homefeed][data-ns-at-home] ytd-browse[page-subtype="home"] ytd-rich-grid-renderer,
+html[data-ns-homefeed][data-ns-at-home] ytd-browse[page-subtype="home"] #chips-wrapper,
+html[data-ns-homefeed][data-ns-at-home] ytm-browse ytm-rich-grid-renderer,
+html[data-ns-homefeed][data-ns-at-home] ytm-browse ytm-feed-filter-chip-bar-renderer {
+  display: none !important;
+}

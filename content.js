@@ -113,4 +113,44 @@
     attributeFilter: ["href"],
   });
   document.addEventListener("DOMContentLoaded", schedule);
+
+  // ---- 4. Optional extras chosen in the popup ----
+  // Each enabled option becomes an attribute on <html> (data-ns-comments, ...) and
+  // content.css hides the matching parts. Shorts are not an option: they stay off.
+  const OPTIONS = ["comments", "chat", "related", "endscreen", "homefeed"];
+  const root = document.documentElement;
+  const applyOptions = (values) => {
+    for (const key of OPTIONS) {
+      if (key in values) root.toggleAttribute("data-ns-" + key, values[key] === true);
+    }
+  };
+  // The home feed option needs to know when we are on the home page
+  const markHome = () => root.toggleAttribute("data-ns-at-home", location.pathname === "/");
+  markHome();
+  for (const ev of ["yt-navigate-finish", "popstate", "pageshow"]) {
+    window.addEventListener(ev, markHome, true);
+  }
+  setInterval(markHome, 500);
+
+  // The userscript build defines NO_SHORTS_STORE (Violentmonkey storage);
+  // the extension uses chrome.storage.
+  const store =
+    typeof NO_SHORTS_STORE !== "undefined"
+      ? NO_SHORTS_STORE
+      : typeof chrome !== "undefined" && chrome.storage
+        ? {
+            load: (keys, cb) => chrome.storage.sync.get(keys, cb),
+            watch: (cb) =>
+              chrome.storage.onChanged.addListener((changes, area) => {
+                if (area !== "sync") return;
+                const values = {};
+                for (const [k, c] of Object.entries(changes)) values[k] = c.newValue;
+                cb(values);
+              }),
+          }
+        : null;
+  if (store) {
+    store.load(OPTIONS, applyOptions);
+    store.watch(applyOptions);
+  }
 })();

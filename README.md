@@ -10,8 +10,8 @@ No Shorts is a tiny browser extension that removes YouTube Shorts from the web: 
 
 | | |
 |---|---|
-| **Size** | 4 files, about 6 KB, no build step |
-| **Permissions** | `youtube.com` only. No tabs, no history, no other sites |
+| **Size** | 7 files, about 16 KB, no build step |
+| **Permissions** | `youtube.com` only, plus storage for your popup choices. No tabs, no history, no other sites |
 | **Network requests** | None. No analytics, no server, nothing leaves your browser |
 
 ## What it does
@@ -25,11 +25,27 @@ A friend sends you a Shorts link. You land on the YouTube homepage.
 
 It covers `www.youtube.com` and `m.youtube.com`.
 
+## Extra options
+
+Click the No Shorts icon in the browser toolbar (on Chrome it may be inside the puzzle-piece menu; pin it to keep it in view). The popup has switches that hide more of YouTube:
+
+| Switch | What disappears |
+|---|---|
+| **Comments** | Comments under videos and in the side panel |
+| **Live chat** | The chat next to streams and premieres |
+| **Related videos** | The column of suggestions next to the player |
+| **End screen** | The suggestions that cover the video when it ends |
+| **Home feed** | The recommendations on the home page |
+
+All switches start off. Changes apply to open YouTube tabs right away, no reload needed. There is no switch for Shorts: they stay blocked whatever you choose.
+
+On Firefox the same options are in the Violentmonkey menu: open a YouTube tab, click the Violentmonkey icon and pick the option under No Shorts.
+
 ## Install
 
 ### Chrome, Edge, Brave, Opera
 
-1. Download `no-shorts-1.0.1.zip` from the [latest release](https://github.com/290990-collab/no-shorts/releases/latest) and unzip it somewhere permanent. The browser loads the extension from that folder, so don't delete it later.
+1. Download `no-shorts-1.1.0.zip` from the [latest release](https://github.com/290990-collab/no-shorts/releases/latest) and unzip it somewhere permanent. The browser loads the extension from that folder, so don't delete it later.
 2. Open `chrome://extensions` (Edge: `edge://extensions`, Brave: `brave://extensions`, Opera: `opera://extensions`).
 3. Turn on **Developer mode** (top right).
 4. Click **Load unpacked** and select the unzipped folder.
@@ -63,7 +79,7 @@ YouTube renames its page elements from time to time. [Open an issue](https://git
 No Shorts is built for people who want the temptation gone, not for parental control. Anyone with access to the browser can disable it in the extensions page.
 
 **What does it collect?**
-Nothing. There is no server to send anything to. The whole extension is four short files you can read in five minutes: [manifest.json](manifest.json), [rules.json](rules.json), [content.css](content.css), [content.js](content.js).
+Nothing. There is no server to send anything to. Your popup choices are saved in the browser's extension storage and synced only through your own browser account, if you use sync. The whole extension is a handful of short files you can read in ten minutes: [manifest.json](manifest.json), [rules.json](rules.json), [content.css](content.css), [content.js](content.js), [popup.html](popup.html), [popup.css](popup.css), [popup.js](popup.js).
 
 **Why is "Developer mode" needed on Chrome?**
 No Shorts isn't on the Chrome Web Store, and Developer mode is how Chrome loads an extension from a folder. It doesn't change anything else in the browser.
@@ -73,8 +89,9 @@ No Shorts isn't on the Chrome Web Store, and Developer mode is how Chrome loads 
 | File | Job |
 |---|---|
 | [rules.json](rules.json) | A `declarativeNetRequest` rule that redirects any `/shorts` page load to the homepage, before YouTube's code runs |
-| [content.css](content.css) | Hides every known Shorts element as soon as it appears |
+| [content.css](content.css) | Hides every known Shorts element as soon as it appears, plus whatever the popup switches turn off |
 | [content.js](content.js) | Leaves `/shorts` pages reached by in-app navigation, blocks clicks on Shorts links, hides what the CSS misses |
+| [popup.html](popup.html), [popup.css](popup.css), [popup.js](popup.js) | The toolbar popup with the extra switches |
 | [no-shorts.user.js](no-shorts.user.js) | The same CSS and script in one userscript, for Firefox |
 
 ## Contributing

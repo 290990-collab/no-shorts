@@ -18,7 +18,11 @@ const out = `// ==UserScript==
 // @license      MIT
 // @match        *://*.youtube.com/*
 // @run-at       document-start
-// @grant        none
+// @grant        GM_getValue
+// @grant        GM_setValue
+// @grant        GM_addValueChangeListener
+// @grant        GM_registerMenuCommand
+// @grant        GM_unregisterMenuCommand
 // @noframes
 // ==/UserScript==
 
@@ -29,6 +33,42 @@ const out = `// ==UserScript==
   style.textContent = \`
 ${css}\`;
   (document.head || document.documentElement).appendChild(style);
+})();
+
+// Optional extras live in the Violentmonkey menu (click its icon on a YouTube tab).
+// Shorts are not in the menu: they are always blocked.
+const NO_SHORTS_STORE = (() => {
+  const LABELS = {
+    comments: "Hide comments",
+    chat: "Hide live chat",
+    related: "Hide related videos",
+    endscreen: "Hide end screen suggestions",
+    homefeed: "Hide home feed",
+  };
+  const ids = {};
+  const drawMenu = () => {
+    for (const key of Object.keys(LABELS)) {
+      if (ids[key] !== undefined && typeof GM_unregisterMenuCommand === "function") {
+        GM_unregisterMenuCommand(ids[key]);
+      }
+      const on = GM_getValue(key, false) === true;
+      ids[key] = GM_registerMenuCommand((on ? "☑ " : "☐ ") + LABELS[key], () => {
+        GM_setValue(key, !on);
+      });
+    }
+  };
+  if (window.top === window) drawMenu();
+  return {
+    load: (keys, cb) => cb(Object.fromEntries(keys.map((k) => [k, GM_getValue(k, false)]))),
+    watch: (cb) => {
+      for (const key of Object.keys(LABELS)) {
+        GM_addValueChangeListener(key, (_name, _old, value) => {
+          cb({ [key]: value });
+          if (window.top === window) drawMenu();
+        });
+      }
+    },
+  };
 })();
 
 ${js}`;

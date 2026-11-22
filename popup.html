@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>No Shorts</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header>
+    <h1>No Shorts</h1>
+  </header>
+
+  <div class="locked" role="note">
+    <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 7V5a3 3 0 0 1 6 0v2h.5A1.5 1.5 0 0 1 13 8.5v5a1.5 1.5 0 0 1-1.5 1.5h-7A1.5 1.5 0 0 1 3 13.5v-5A1.5 1.5 0 0 1 4.5 7H5Zm1.5 0h3V5a1.5 1.5 0 0 0-3 0v2Z"/></svg>
+    <div>
+      <strong>Shorts are always blocked</strong>
+      <span>This can't be switched off.</span>
+    </div>
+  </div>
+
+  <h2>Also hide</h2>
+  <ul class="options">
+    <li>
+      <label>
+        <span class="text"><strong>Comments</strong><span>Under videos and in the side panel</span></span>
+        <input type="checkbox" data-option="comments">
+        <span class="switch" aria-hidden="true"></span>
+      </label>
+    </li>
+    <li>
+      <label>
+        <span class="text"><strong>Live chat</strong><span>Next to streams and premieres</span></span>
+        <input type="checkbox" data-option="chat">
+        <span class="switch" aria-hidden="true"></span>
+      </label>
+    </li>
+    <li>
+      <label>
+        <span class="text"><strong>Related videos</strong><span>The column next to the player</span></span>
+        <input type="checkbox" data-option="related">
+        <span class="switch" aria-hidden="true"></span>
+      </label>
+    </li>
+    <li>
+      <label>
+        <span class="text"><strong>End screen</strong><span>Suggestions over the video when it ends</span></span>
+        <input type="checkbox" data-option="endscreen">
+        <span class="switch" aria-hidden="true"></span>
+      </label>
+    </li>
+    <li>
+      <label>
+        <span class="text"><strong>Home feed</strong><span>Recommendations on the home page</span></span>
+        <input type="checkbox" data-option="homefeed">
+        <span class="switch" aria-hidden="true"></span>
+      </label>
+    </li>
+  </ul>
+
+  <p class="foot">Changes apply to open YouTube tabs right away.</p>
+
+  <script src="popup.js"></script>
+</body>
+</html>

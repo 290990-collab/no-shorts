@@ -1,15 +1,19 @@
 // ==UserScript==
 // @name         No Shorts
 // @namespace    https://github.com/290990-collab/no-shorts
-// @version      1.0.1
-// @description  Removes YouTube Shorts everywhere: menu, shelves, search, channel tabs and the /shorts URL itself.
+// @version      1.1.0
+// @description  Removes YouTube Shorts everywhere: menu, shelves, search, channel tabs and the /shorts URL itself. Optionally hides comments, live chat, related videos and more.
 // @homepageURL  https://github.com/290990-collab/no-shorts
 // @downloadURL  https://raw.githubusercontent.com/290990-collab/no-shorts/main/no-shorts.user.js
 // @updateURL    https://raw.githubusercontent.com/290990-collab/no-shorts/main/no-shorts.user.js
 // @license      MIT
 // @match        *://*.youtube.com/*
 // @run-at       document-start
-// @grant        none
+// @grant        GM_getValue
+// @grant        GM_setValue
+// @grant        GM_addValueChangeListener
+// @grant        GM_registerMenuCommand
+// @grant        GM_unregisterMenuCommand
 // @noframes
 // ==/UserScript==
 
@@ -71,8 +75,82 @@ ytm-shorts-lockup-view-model,
 [data-no-shorts] {
   display: none !important;
 }
+
+/* ===== Optional extras, switched on from the popup ===== */
+/* content.js puts data-ns-<option> on <html> for each enabled option */
+
+/* Comments */
+html[data-ns-comments] ytd-comments#comments,
+html[data-ns-comments] ytd-item-section-renderer[section-identifier="comment-item-section"],
+html[data-ns-comments] ytd-engagement-panel-section-list-renderer[target-id="engagement-panel-comments-section"],
+html[data-ns-comments] ytd-comments-entry-point-header-renderer,
+html[data-ns-comments] ytm-comments-entry-point-header-renderer,
+html[data-ns-comments] ytm-comment-section-renderer,
+html[data-ns-comments] ytm-item-section-renderer[section-identifier="comments-entry-point"],
+html[data-ns-comments] ytm-engagement-panel-section-list-renderer[panel-target-id="engagement-panel-comments-section"],
+
+/* Live chat */
+html[data-ns-chat] ytd-live-chat-frame,
+html[data-ns-chat] #chat-container,
+html[data-ns-chat] ytm-live-chat-renderer,
+
+/* Related videos next to (or under) the player */
+html[data-ns-related] ytd-watch-flexy #related,
+html[data-ns-related] ytd-watch-next-secondary-results-renderer,
+html[data-ns-related] ytm-item-section-renderer[section-identifier="related-items"],
+html[data-ns-related] ytm-single-column-watch-next-results-renderer ytm-item-section-renderer:has(ytm-video-with-context-renderer),
+
+/* Suggestions on top of the video when it ends */
+html[data-ns-endscreen] .ytp-endscreen-content,
+html[data-ns-endscreen] .ytp-ce-element,
+html[data-ns-endscreen] .ytp-fullscreen-grid,
+html[data-ns-endscreen] .ytp-autonav-endscreen-upnext-container,
+
+/* Home page feed */
+html[data-ns-homefeed][data-ns-at-home] ytd-browse[page-subtype="home"] ytd-rich-grid-renderer,
+html[data-ns-homefeed][data-ns-at-home] ytd-browse[page-subtype="home"] #chips-wrapper,
+html[data-ns-homefeed][data-ns-at-home] ytm-browse ytm-rich-grid-renderer,
+html[data-ns-homefeed][data-ns-at-home] ytm-browse ytm-feed-filter-chip-bar-renderer {
+  display: none !important;
+}
 `;
   (document.head || document.documentElement).appendChild(style);
+})();
+
+// Optional extras live in the Violentmonkey menu (click its icon on a YouTube tab).
+// Shorts are not in the menu: they are always blocked.
+const NO_SHORTS_STORE = (() => {
+  const LABELS = {
+    comments: "Hide comments",
+    chat: "Hide live chat",
+    related: "Hide related videos",
+    endscreen: "Hide end screen suggestions",
+    homefeed: "Hide home feed",
+  };
+  const ids = {};
+  const drawMenu = () => {
+    for (const key of Object.keys(LABELS)) {
+      if (ids[key] !== undefined && typeof GM_unregisterMenuCommand === "function") {
+        GM_unregisterMenuCommand(ids[key]);
+      }
+      const on = GM_getValue(key, false) === true;
+      ids[key] = GM_registerMenuCommand((on ? "☑ " : "☐ ") + LABELS[key], () => {
+        GM_setValue(key, !on);
+      });
+    }
+  };
+  if (window.top === window) drawMenu();
+  return {
+    load: (keys, cb) => cb(Object.fromEntries(keys.map((k) => [k, GM_getValue(k, false)]))),
+    watch: (cb) => {
+      for (const key of Object.keys(LABELS)) {
+        GM_addValueChangeListener(key, (_name, _old, value) => {
+          cb({ [key]: value });
+          if (window.top === window) drawMenu();
+        });
+      }
+    },
+  };
 })();
 
 (() => {
@@ -190,4 +268,44 @@ ytm-shorts-lockup-view-model,
     attributeFilter: ["href"],
   });
   document.addEventListener("DOMContentLoaded", schedule);
+
+  // ---- 4. Optional extras chosen in the popup ----
+  // Each enabled option becomes an attribute on <html> (data-ns-comments, ...) and
+  // content.css hides the matching parts. Shorts are not an option: they stay off.
+  const OPTIONS = ["comments", "chat", "related", "endscreen", "homefeed"];
+  const root = document.documentElement;
+  const applyOptions = (values) => {
+    for (const key of OPTIONS) {
+      if (key in values) root.toggleAttribute("data-ns-" + key, values[key] === true);
+    }
+  };
+  // The home feed option needs to know when we are on the home page
+  const markHome = () => root.toggleAttribute("data-ns-at-home", location.pathname === "/");
+  markHome();
+  for (const ev of ["yt-navigate-finish", "popstate", "pageshow"]) {
+    window.addEventListener(ev, markHome, true);
+  }
+  setInterval(markHome, 500);
+
+  // The userscript build defines NO_SHORTS_STORE (Violentmonkey storage);
+  // the extension uses chrome.storage.
+  const store =
+    typeof NO_SHORTS_STORE !== "undefined"
+      ? NO_SHORTS_STORE
+      : typeof chrome !== "undefined" && chrome.storage
+        ? {
+            load: (keys, cb) => chrome.storage.sync.get(keys, cb),
+            watch: (cb) =>
+              chrome.storage.onChanged.addListener((changes, area) => {
+                if (area !== "sync") return;
+                const values = {};
+                for (const [k, c] of Object.entries(changes)) values[k] = c.newValue;
+                cb(values);
+              }),
+          }
+        : null;
+  if (store) {
+    store.load(OPTIONS, applyOptions);
+    store.watch(applyOptions);
+  }
 })();

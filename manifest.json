@@ -1,20 +1,39 @@
 {
   "manifest_version": 3,
   "name": "No Shorts",
-  "version": "1.0.1",
-  "description": "Removes YouTube Shorts everywhere: menu, shelves, search, channel tabs and the /shorts URL itself.",
-  "permissions": ["declarativeNetRequest"],
-  "host_permissions": ["*://*.youtube.com/*"],
+  "version": "1.1.0",
+  "description": "Removes YouTube Shorts everywhere: menu, shelves, search, channel tabs and the /shorts URL itself. Optionally hides comments, live chat, related videos and more.",
+  "permissions": [
+    "declarativeNetRequest",
+    "storage"
+  ],
+  "host_permissions": [
+    "*://*.youtube.com/*"
+  ],
+  "action": {
+    "default_title": "No Shorts",
+    "default_popup": "popup.html"
+  },
   "declarative_net_request": {
     "rule_resources": [
-      { "id": "block_shorts", "enabled": true, "path": "rules.json" }
+      {
+        "id": "block_shorts",
+        "enabled": true,
+        "path": "rules.json"
+      }
     ]
   },
   "content_scripts": [
     {
-      "matches": ["*://*.youtube.com/*"],
-      "css": ["content.css"],
-      "js": ["content.js"],
+      "matches": [
+        "*://*.youtube.com/*"
+      ],
+      "css": [
+        "content.css"
+      ],
+      "js": [
+        "content.js"
+      ],
       "run_at": "document_start",
       "all_frames": true
     }
